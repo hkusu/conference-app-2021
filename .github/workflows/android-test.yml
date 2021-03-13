@@ -5,6 +5,7 @@ on:
       # - main
       - add_android_test_workflow # for debug
 
+# ref: https://github.com/android/compose-samples/blob/651b6dd2d66e22cfeb9ce3c0a8dc0378968e6501/.github/workflows/JetNews.yaml
 jobs:
   test:
     name: "android test on main branch"
@@ -29,7 +30,7 @@ jobs:
           path: |
             ~/.gradle/caches
             ~/.gradle/wrapper
-          key: ${{ runner.os }}-gradle-tmp-${{ hashFiles('**/*.gradle', '**/*.gradle.kts', 'buildSrc/src/**/*.kt', '**/gradle.properties', 'gradle/**') }}
+          key: ${{ runner.os }}-gradle-${{ hashFiles('**/*.gradle', '**/*.gradle.kts', 'buildSrc/src/**/*.kt', '**/gradle.properties', 'gradle/**') }}
       - uses: reactivecircus/android-emulator-runner@v2
         with:
           api-level: ${{ matrix.api-level }}
