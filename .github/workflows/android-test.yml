@@ -1,0 +1,44 @@
+name: android-ui-test
+on:
+  push: # Since it takes time, execute only when merging
+    branches:
+      # - main
+      - add_android_test_workflow # for debug
+
+jobs:
+  test:
+    name: "android ui test on main branch"
+    runs-on: macos-latest # to use emulator
+
+    timeout-minutes: 30
+    strategy:
+      matrix:
+        api-level: [23, 26, 29]
+      fail-fast: false
+    steps:
+      - uses: actions/checkout@v2
+        with:
+          ref: ${{ github.ref }}
+      - uses: actions/setup-java@v1
+        with:
+          java-version: '11'
+      #- uses: eskatos/gradle-command-action@v1
+      #  with:
+      #    arguments: iosTest
+      #    dependencies-cache-key: |
+      #      **/*.gradle
+      #      **/*.gradle.kts
+      #      buildSrc/src/**/*.kt
+      #      **/gradle.properties
+      #      gradle/**
+      - uses: reactivecircus/android-emulator-runner@v2
+        with:
+          api-level: ${{ matrix.api-level }}
+          arch: x86
+          disable-animations: true
+          script: ./gradlew uicomponent-compose:feed:connectedCheck --stacktrace
+      #- uses: actions/upload-artifact@v2
+      #  with:
+      #    name: android-ui-test-reports
+      #    path: "./**/reports"
+      #    retention-days: 14
