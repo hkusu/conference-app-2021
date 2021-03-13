@@ -13,8 +13,9 @@ jobs:
     strategy:
       matrix:
         # Currently, lower terminals fail
-        # https://github.com/Kotlin/kotlinx-datetime#using-in-your-projects
-        api-level: [26, 28, 30]
+        #   ref: https://github.com/Kotlin/kotlinx-datetime#using-in-your-projects
+        # Currently, no API 30 virtual image
+        api-level: [26, 27, 28, 29]
       fail-fast: false
     steps:
       - uses: actions/checkout@v2
@@ -23,33 +24,23 @@ jobs:
       - uses: actions/setup-java@v1
         with:
           java-version: '11'
-      #- uses: eskatos/gradle-command-action@v1
-      #  with:
-      #    arguments: iosTest
-      #    dependencies-cache-key: |
-      #      **/*.gradle
-      #      **/*.gradle.kts
-      #      buildSrc/src/**/*.kt
-      #      **/gradle.properties
-      #      gradle/**
       - uses: actions/cache@v2
         with:
           path: |
-            ~/.gradle/caches/modules-*
-            ~/.gradle/caches/jars-*
-            ~/.gradle/caches/build-cache-*
-          key: ${{ runner.os }}-gradle-${{ hashFiles('**/*.gradle', '**/*.gradle.kts', 'buildSrc/src/**/*.kt', '**/gradle.properties', 'gradle/**') }}
+            ~/.gradle/caches
+            ~/.gradle/wrapper
+          key: ${{ runner.os }}-gradle-tmp-${{ hashFiles('**/*.gradle', '**/*.gradle.kts', 'buildSrc/src/**/*.kt', '**/gradle.properties', 'gradle/**') }}
       - uses: reactivecircus/android-emulator-runner@v2
         with:
           api-level: ${{ matrix.api-level }}
           arch: x86
           disable-animations: true
-          script: ./gradlew uicomponent-compose:feed:connectedCheck --stacktrace
+          script: ./gradlew uicomponent-compose:main:connectedCheck uicomponent-compose:feed:connectedCheck uicomponent-compose:other:connectedCheck uicomponent-compose:core:connectedCheck
       - uses: actions/upload-artifact@v2
         if: cancelled() != true
         with:
           name: android-test-reports-${{ matrix.api-level }}
           path: |
-            ./**/reports
-            !./buildSrc
+            **/reports
+            !buildSrc
           retention-days: 14
