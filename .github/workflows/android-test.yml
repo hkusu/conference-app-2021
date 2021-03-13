@@ -38,10 +38,10 @@ jobs:
           disable-animations: true
           script: ./gradlew uicomponent-compose:main:connectedCheck uicomponent-compose:feed:connectedCheck uicomponent-compose:other:connectedCheck uicomponent-compose:core:connectedCheck
       - uses: actions/upload-artifact@v2
-        if: cancelled() != true
+        if: cancelled() != true # upload even if there is an error in the test
         with:
           name: android-test-reports-${{ matrix.api-level }}
           path: |
             **/reports
-            !buildSrc
+            !buildSrc/build/reports
           retention-days: 14
