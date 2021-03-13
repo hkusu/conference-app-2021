@@ -12,7 +12,9 @@ jobs:
     timeout-minutes: 30
     strategy:
       matrix:
-        api-level: [23, 26, 29]
+        # Currently, lower terminals fail
+        # https://github.com/Kotlin/kotlinx-datetime#using-in-your-projects
+        api-level: [26, 28, 30]
       fail-fast: false
     steps:
       - uses: actions/checkout@v2
@@ -44,7 +46,10 @@ jobs:
           disable-animations: true
           script: ./gradlew uicomponent-compose:feed:connectedCheck --stacktrace
       - uses: actions/upload-artifact@v2
+        if: cancelled() != true
         with:
           name: android-test-reports-${{ matrix.api-level }}
-          path: "./**/reports"
+          path: |
+            ./**/reports
+            !./buildSrc
           retention-days: 14
