@@ -1,4 +1,4 @@
-name: android-ui-test
+name: android-test
 on:
   push: # Since it takes time, execute only when merging
     branches:
@@ -7,9 +7,8 @@ on:
 
 jobs:
   test:
-    name: "android ui test on main branch"
+    name: "android test on main branch"
     runs-on: macos-latest # to use emulator
-
     timeout-minutes: 30
     strategy:
       matrix:
@@ -46,6 +45,6 @@ jobs:
           script: ./gradlew uicomponent-compose:feed:connectedCheck --stacktrace
       - uses: actions/upload-artifact@v2
         with:
-          name: android-ui-test-reports
+          name: android-test-reports-${{ matrix.api-level }}
           path: "./**/reports"
           retention-days: 14
