@@ -31,14 +31,21 @@ jobs:
       #      buildSrc/src/**/*.kt
       #      **/gradle.properties
       #      gradle/**
+      - uses: actions/cache@v2
+        with:
+          path: |
+            ~/.gradle/caches/modules-*
+            ~/.gradle/caches/jars-*
+            ~/.gradle/caches/build-cache-*
+          key: ${{ runner.os }}-gradle-${{ hashFiles('**/*.gradle', '**/*.gradle.kts', 'buildSrc/src/**/*.kt', '**/gradle.properties', 'gradle/**') }}
       - uses: reactivecircus/android-emulator-runner@v2
         with:
           api-level: ${{ matrix.api-level }}
           arch: x86
           disable-animations: true
           script: ./gradlew uicomponent-compose:feed:connectedCheck --stacktrace
-      #- uses: actions/upload-artifact@v2
-      #  with:
-      #    name: android-ui-test-reports
-      #    path: "./**/reports"
-      #    retention-days: 14
+      - uses: actions/upload-artifact@v2
+        with:
+          name: android-ui-test-reports
+          path: "./**/reports"
+          retention-days: 14
