@@ -1,6 +1,6 @@
 name: android-test
 on:
-  push: # Since it takes time, execute only when merging
+  push: # Since it takes time and is unstable, execute only when merging
     branches:
       # - main
       - add_android_test_workflow # for debug
